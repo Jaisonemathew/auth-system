@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { signIn} from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -18,34 +18,25 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError(null);
-    
-    const formData = new FormData(event.currentTarget);
-    const data = Object.fromEntries(formData.entries());
+  const handleSubmit = async (formData: FormData) => {
+    const credentials = Object.fromEntries(formData);
+    const result = await signIn("credentials", {
+      ...credentials,
+      redirect: false, // Disable automatic redirection
+    });
 
-    try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: data.email as string,
-        password: data.password as string,
-      });
-
-      if (result?.error) {
-        setError(result.error);
-      } else {
-        router.push("/dashboard");
-      }
-    } catch (err) {
-      setError("An unexpected error occurred");
+    if (result?.error) {
+      // If there's an error, display it to the user
+      setError(result.error);
+    } else {
+      // If successful, redirect to the dashboard
+      router.push("/dashboard");
     }
   };
- 
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -56,12 +47,10 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {error && (
-            <div className="text-red-500 mb-4">
-              {error}
-            </div>
-          )}
-          <form onSubmit={handleSubmit}>
+          {error && <div className="text-red-500 mb-4">{error}</div>}
+          <form
+            action={handleSubmit} // Use the custom handler
+          >
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -83,11 +72,11 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input 
-                  id="password" 
-                  type="password" 
-                  name="password" 
-                  required 
+                <Input
+                  id="password"
+                  type="password"
+                  name="password"
+                  required
                 />
               </div>
               <Button type="submit" className="w-full">

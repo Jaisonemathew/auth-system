@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-
+import Link from 'next/link';
 export default function SignupPage() {
   const [error, setError] = useState('');
   const router = useRouter();
@@ -90,9 +90,9 @@ export default function SignupPage() {
             </form>
             <div className="mt-4 text-center text-sm">
               Already have an account?{" "}
-              <a href="/" className="underline underline-offset-4">
+              <Link href="/" className="underline underline-offset-4">
                 Login
-              </a>
+              </Link>
             </div>
           </CardContent>
         </Card>
