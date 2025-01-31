@@ -61,11 +61,9 @@ const handler = NextAuth({
   },
   callbacks: {
     async redirect({ url, baseUrl }) {
-      // Redirect to /dashboard after sign-in
       if (url.startsWith(baseUrl)) {
         return `${baseUrl}/dashboard`;
       }
-      // Allow relative URLs
       if (url.startsWith('/')) {
         return `${baseUrl}${url}`;
       }

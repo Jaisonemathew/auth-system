@@ -17,6 +17,12 @@ export default function SignupPage() {
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
 
     try {
       const result = await signIn('credentials', {
@@ -67,6 +73,15 @@ export default function SignupPage() {
                     required
                   />
                 </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    required
+                  />
+                </div>
                 {error && <p className="text-red-500">{error}</p>}
                 <Button type="submit" className="w-full">
                   Sign Up
@@ -74,8 +89,8 @@ export default function SignupPage() {
               </div>
             </form>
             <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
-              <a href="/login" className="underline underline-offset-4">
+              Already have an account?{" "}
+              <a href="/" className="underline underline-offset-4">
                 Login
               </a>
             </div>
