@@ -18,26 +18,34 @@ export default function SignupPage() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
     const confirmPassword = formData.get('confirmPassword') as string;
-
+  
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-
+  
     try {
-      const result = await signIn('credentials', {
-        redirect: false,
-        email,
-        password
+      // Create user via API route
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+        headers: { 'Content-Type': 'application/json' }
       });
-
-      if (result?.error) {
-        setError(result.error);
-      } else {
-        router.push('/'); // Redirect after successful signup/login
+  
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Signup failed');
       }
+  
+      await signIn('credentials', {
+        email,
+        password,
+        redirect: false
+      });
+  
+      router.push('/dashboard');
     } catch (err) {
-      setError('An error occurred');
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 

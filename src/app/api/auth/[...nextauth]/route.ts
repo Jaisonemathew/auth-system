@@ -20,40 +20,28 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) return null
-    
+        if (!credentials?.email || !credentials.password) return null;
+      
+        // Only check for existing user (no creation)
         const existingUser = await prisma.user.findUnique({
           where: { email: credentials.email }
-        })
-    
-        if (!existingUser) {
-          const hashedPassword = await hash(credentials.password, 10)
-          const newUser = await prisma.user.create({
-            data: {
-              email: credentials.email,
-              password: hashedPassword
-            }
-          })
-    
-          return {
-            id: newUser.id,
-            email: newUser.email
-          }
-        }
-    
-        const isPasswordValid = await compare(
+        });
+      
+        if (!existingUser) return null; // Reject login if user doesn't exist
+      
+        // Verify password
+        const isValid = await compare(
           credentials.password,
           existingUser.password || ''
-        )
-    
-        if (!isPasswordValid) return null
-    
+        );
+      
+        if (!isValid) return null; // Reject invalid password
+      
         return {
           id: existingUser.id,
           email: existingUser.email
-        }
-      }
-    })
+        };
+      }})
   ],
   pages: {
     signIn: '/',
