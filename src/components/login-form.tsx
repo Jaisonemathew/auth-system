@@ -22,17 +22,19 @@ export function LoginForm({
   const router = useRouter();
 
   const handleSubmit = async (formData: FormData) => {
-    const credentials = Object.fromEntries(formData);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
     const result = await signIn("credentials", {
-      ...credentials,
-      redirect: false, // Disable automatic redirection
+      email,
+      password,
+      redirect: false,
     });
 
     if (result?.error) {
-      // If there's an error, display it to the user
       setError(result.error);
     } else {
-      // If successful, redirect to the dashboard
+      router.refresh();
       router.push("/dashboard");
     }
   };
@@ -47,10 +49,8 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {error && <div className="text-red-500 mb-4">{error}</div>}
-          <form
-            action={handleSubmit} // Use the custom handler
-          >
+          {error && <div className="text-red-500 mb-4">Invalid Creditionals !!!</div>}
+          <form action={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
