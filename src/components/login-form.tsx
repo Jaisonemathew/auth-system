@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -103,6 +104,7 @@ export function LoginForm({
           </div>
         </CardContent>
       </Card>
+      <footer className="flex items-center justify-center"><Link href="https://jaisonemathew.me" target="_blank" rel="noopener noreferrer">Made by Jaison E Mathew</Link></footer>
     </div>
   );
 }
